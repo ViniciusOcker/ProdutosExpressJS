@@ -3,21 +3,28 @@ var bodyParser = require('body-parser')
 var jsonParser = bodyParser.json()
 var router = express.Router();
 
-const ProductDomain = require("../domain/ProductDomain");
+ProductService = require("../service/ProductService");
 
 router.get('/', function (req, res){
-    ProductDomain.readAll(res)
-})
-
-router.get('/:id', function (req, res){
-    ProductDomain.readById(req.params.id, res)
+    ProductService.readAll(res)
 })
 
 router.post('/', jsonParser, (req, res) => {
     let name = req.body.name;
     let description = req.body.description;
     let price = req.body.price;
-    ProductDomain.save(name, description, price, res)
+    ProductService.save(name, description, price, res)
+})
+
+router.get('/:id', function (req, res){
+    ProductService.readById(req.params.id, res)
+})
+
+router.put("/:id", jsonParser, function (req, res) {
+    let name = req.body.name;
+    let description = req.body.description;
+    let price = req.body.price;
+    ProductService.update(req.params.id, name, description, price, res)
 })
 
 module.exports = router;
