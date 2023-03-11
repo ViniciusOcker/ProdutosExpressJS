@@ -45,17 +45,55 @@ const create = (name, description, price, res, ignore) => {
     })
 }
 
-const findAll = (res) => {
-    con.con.execute(
-    "SELECT * FROM products",
+const findAll = (res, limit, page) => {
+    con.con.query(
+    "SELECT COUNT(*) as quant FROM products",
     (err, results, fields) => {
         if (err) {
             let uuid = uuidv4()
             console.log("[Code: " + uuid + " findall select all ]" + err.stack)
             res.status(500)
             res.send(`Internal error [code: ${uuid} ]`)
-        } else {
-            res.json(results)
+        } else if(results.length == 1){
+            let page_max = Math.ceil(results[0].quant/limit);
+            if(limit < 2){
+                limit = 2;
+            }
+            else if(limit > 500){
+                limit = 500;
+            }
+        
+            if(page < 1) {
+                page = 1;
+            }
+            else if(page > page_max){
+                page = page_max;
+            }
+            let offset = (limit*(page-1))
+            con.con.query(
+            "SELECT * FROM products LIMIT ? OFFSET ?",
+            [limit, offset],
+            (err, results, fields) => {
+                if (err) {
+                    let uuid = uuidv4()
+                    console.log("[Code: " + uuid + " findall select all ]" + err.stack)
+                    res.status(500)
+                    res.send(`Internal error [code: ${uuid} ]`)
+                } else {
+                    res.json({
+                        page: page,
+                        limit: limit,
+                        page_max: page_max,
+                        products: results
+                    })
+                }
+            })
+        }
+        else {
+            let uuid = uuidv4()
+            console.log("Error interno desconhecido! [Code: " + uuid + " result != 1]")
+            res.status(500)
+            res.send(`Internal error [code: ${uuid} ]`)
         }
     })
 }

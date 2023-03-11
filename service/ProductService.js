@@ -5,8 +5,18 @@ const save = (name, description, price, res) => {
     ProductValidation.validation(name,description,price,res,ProductDomain.create, null)
 }
 
-const readAll = (res) => {
-    ProductDomain.findAll(res)
+const readAll = (req, res) => {
+    let limit = req.query.limit;
+    let page = req.query.page;
+    if(page == undefined){
+        page = 1;
+    }
+    if(limit == undefined){
+        limit = 50;
+    }
+    limit = Number(limit)
+    page = Number(page)
+    ProductDomain.findAll(res, limit, page)
 }
 
 const readById = (id, res) => {

@@ -6,7 +6,7 @@ var router = express.Router()
 ProductService = require("../service/ProductService")
 
 router.get('/', function (req, res){
-    ProductService.readAll(res)
+    ProductService.readAll(req,res)
 })
 
 router.post('/', jsonParser, (req, res) => {
