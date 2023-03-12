@@ -1,0 +1,311 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Produtos em Express API",
+    "description": "Um api que gerenciar produtos feito em expressjs",
+    "version": "0.0.1"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Produtos",
+      "description": "Gerenciar os produtos"
+    }
+  ],
+  "paths": {
+    "/product": {
+      "get": {
+        "tags": [
+          "Produtos"
+        ],
+        "summary": "Listar todos os produtos",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Quantos itens exibir por pagina",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 50
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Pagina da lista",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de produtos retornado com sucesso!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OutputPageProduct"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error [code: UUID ]"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Produtos"
+        ],
+        "summary": "Adicionar um novo produto",
+        "requestBody": {
+          "description": "Criar um novo produto",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InputProduct"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Retorna o produto recém criado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OutputProductFull"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Entrada inserida é invalido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorProduct"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal error [code: UUID ]"
+          }
+        }
+      }
+    },
+    "/product/{productId}": {
+      "get": {
+        "tags": [
+          "Produtos"
+        ],
+        "summary": "Exibindo informações de um produto especifico",
+        "parameters": [
+          {
+            "name": "productId",
+            "in": "path",
+            "description": "ID do produto",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Retorna o produto especifico",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OutputProductFull"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Este produto não existir!"
+          },
+          "500": {
+            "description": "Internal error [code: UUID ]"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Produtos"
+        ],
+        "summary": "Exibindo informações de um produto especifico",
+        "parameters": [
+          {
+            "name": "productId",
+            "in": "path",
+            "description": "ID do produto",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Criar um novo produto",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InputProduct"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Retorna o produto especifico",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OutputProductFull"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Entrada inserida é invalido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorProduct"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Este produto não existir!"
+          },
+          "500": {
+            "description": "Internal error [code: UUID ]"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Produtos"
+        ],
+        "summary": "Exibindo informações de um produto especifico",
+        "parameters": [
+          {
+            "name": "productId",
+            "in": "path",
+            "description": "ID do produto",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          },
+          "404": {
+            "description": "Este produto não existir!"
+          },
+          "500": {
+            "description": "Internal error [code: UUID ]"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "InputProduct": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "Navio Cruzeiro T45"
+          },
+          "description": {
+            "type": "string",
+            "example": "Um navio de  cruzeiro de 850 metros"
+          },
+          "price": {
+            "type": "number",
+            "example": 10000.54
+          }
+        }
+      },
+      "OutputPageProduct": {
+        "type": "object",
+        "properties": {
+          "page": {
+            "type": "integer",
+            "example": 1
+          },
+          "limit": {
+            "type": "integer",
+            "example": 50
+          },
+          "page_max": {
+            "type": "integer",
+            "example": 89
+          },
+          "products": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OutputProductFull"
+            }
+          }
+        }
+      },
+      "OutputProductFull": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 1
+          },
+          "name": {
+            "type": "string",
+            "example": "Navio Cruzeiro T45"
+          },
+          "description": {
+            "type": "string",
+            "example": "Um navio de  cruzeiro de 850 metros"
+          },
+          "price": {
+            "type": "number",
+            "example": 10000.54
+          }
+        }
+      },
+      "ErrorProduct": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "O produto X já está registrado!"
+          },
+          "description": {
+            "type": "string",
+            "example": null
+          },
+          "price": {
+            "type": "string",
+            "example": null
+          }
+        }
+      }
+    }
+  }
+}

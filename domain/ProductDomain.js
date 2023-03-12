@@ -13,7 +13,13 @@ const create = (name, description, price, res, ignore) => {
             res.send(`Internal error [code: ${uuid} ]`)
         } else if (results.length) {
             res.status(400)
-            res.send(`O produto ${name} já está registrado!`)
+            res.send(
+                {
+                    name: `O produto ${name} já está registrado!`,
+                    description: null,
+                    price: null,
+                }
+            )
         } else {
             con.con.query(
             "INSERT INTO products (name, description, price) VALUES (?, ?, ?)",
@@ -55,39 +61,49 @@ const findAll = (res, limit, page) => {
             res.status(500)
             res.send(`Internal error [code: ${uuid} ]`)
         } else if(results.length == 1){
-            let page_max = Math.ceil(results[0].quant/limit);
-            if(limit < 2){
-                limit = 2;
-            }
-            else if(limit > 500){
-                limit = 500;
-            }
-        
-            if(page < 1) {
-                page = 1;
-            }
-            else if(page > page_max){
-                page = page_max;
-            }
-            let offset = (limit*(page-1))
-            con.con.query(
-            "SELECT * FROM products LIMIT ? OFFSET ?",
-            [limit, offset],
-            (err, results, fields) => {
-                if (err) {
-                    let uuid = uuidv4()
-                    console.log("[Code: " + uuid + " findall select all ]" + err.stack)
-                    res.status(500)
-                    res.send(`Internal error [code: ${uuid} ]`)
-                } else {
-                    res.json({
-                        page: page,
-                        limit: limit,
-                        page_max: page_max,
-                        products: results
-                    })
+            if(results[0].quant !== 0){
+                let page_max = Math.ceil(results[0].quant/limit);
+                if(limit < 2){
+                    limit = 2;
                 }
-            })
+                else if(limit > 500){
+                    limit = 500;
+                }
+            
+                if(page < 1) {
+                    page = 1;
+                }
+                else if(page > page_max){
+                    page = page_max;
+                }
+                let offset = (limit*(page-1))
+                con.con.query(
+                "SELECT * FROM products LIMIT ? OFFSET ?",
+                [limit, offset],
+                (err, results, fields) => {
+                    if (err) {
+                        let uuid = uuidv4()
+                        console.log("[Code: " + uuid + " findall select all ]" + err.stack)
+                        res.status(500)
+                        res.send(`Internal error [code: ${uuid} ]`)
+                    } else {
+                        res.json({
+                            page: page,
+                            limit: limit,
+                            page_max: page_max,
+                            products: results
+                        })
+                    }
+                })
+            }
+            else{
+                res.json({
+                    page: 1,
+                    limit: 500,
+                    page_max: 1,
+                    products: []
+                })
+            }
         }
         else {
             let uuid = uuidv4()
@@ -109,7 +125,7 @@ const findById = (id, res) => {
             res.status(500)
             res.send(`Internal error [code: ${uuid} ]`)
         } else if (results.length != 0) {
-            res.json(results)
+            res.json(results[0])
         } else {
             res.status(404)
             res.send(`Este produto não existir!`)
@@ -142,7 +158,13 @@ const update = (name, description, price, res, id) => {
                     res.send(`Internal error [code: ${uuid} ]`)
                 } else if (results.length) {
                     res.status(400)
-                    res.send(`O produto ${name} já está registrado!`)
+                    res.send(
+                        {
+                            name: `O produto ${name} já está registrado!`,
+                            description: null,
+                            price: null,
+                        }
+                    )
                 } else {
                     con.con.query(
                     "UPDATE products SET name = ? , description = ? , price = ? WHERE id = ?",
