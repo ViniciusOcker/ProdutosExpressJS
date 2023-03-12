@@ -2,7 +2,7 @@ const con = require("./connection")
 const { v4: uuidv4 } = require("uuid")
 
 const create = (name, description, price, res, ignore) => {
-    con.con.query(
+    con.query(
     "SELECT * FROM products WHERE name LIKE ?",
     [name],
     (err, results, fields) => {
@@ -21,7 +21,7 @@ const create = (name, description, price, res, ignore) => {
                 }
             )
         } else {
-            con.con.query(
+            con.query(
             "INSERT INTO products (name, description, price) VALUES (?, ?, ?)",
             [name, description, price],
             (err, results, fields) => {
@@ -31,7 +31,7 @@ const create = (name, description, price, res, ignore) => {
                     res.status(500)
                     res.send(`Internal error [code: ${uuid} ]`)
                 } else {
-                    con.con.query(
+                    con.query(
                     "SELECT * FROM products WHERE name LIKE ?",
                     [name],
                     (err, results, fields) => {
@@ -52,7 +52,7 @@ const create = (name, description, price, res, ignore) => {
 }
 
 const findAll = (res, limit, page) => {
-    con.con.query(
+    con.query(
     "SELECT COUNT(*) as quant FROM products",
     (err, results, fields) => {
         if (err) {
@@ -77,7 +77,7 @@ const findAll = (res, limit, page) => {
                     page = page_max;
                 }
                 let offset = (limit*(page-1))
-                con.con.query(
+                con.query(
                 "SELECT * FROM products LIMIT ? OFFSET ?",
                 [limit, offset],
                 (err, results, fields) => {
@@ -115,7 +115,7 @@ const findAll = (res, limit, page) => {
 }
 
 const findById = (id, res) => {
-    con.con.query(
+    con.query(
     "SELECT * FROM products WHERE id = ?",
     [id],
     (err, results, fields) => {
@@ -134,7 +134,7 @@ const findById = (id, res) => {
 }
 
 const update = (name, description, price, res, id) => {
-    con.con.query(
+    con.query(
     "SELECT * FROM products WHERE id = ?",
     [id],
     (err, results, fields) => {
@@ -147,7 +147,7 @@ const update = (name, description, price, res, id) => {
             res.status(404)
             res.send(`Este produto não existir!`)
         } else {
-            con.con.query(
+            con.query(
             "SELECT * FROM products WHERE name LIKE ?",
             [name],
             (err, results, fields) => {
@@ -166,7 +166,7 @@ const update = (name, description, price, res, id) => {
                         }
                     )
                 } else {
-                    con.con.query(
+                    con.query(
                     "UPDATE products SET name = ? , description = ? , price = ? WHERE id = ?",
                     [name, description, price, id],
                     (err, results, fields) => {
@@ -177,7 +177,7 @@ const update = (name, description, price, res, id) => {
                             res.send(`Internal error [code: ${uuid} ]`)
                         }
                         else{
-                            con.con.query(
+                            con.query(
                             "SELECT * FROM products WHERE name LIKE ?",
                             [name],
                             (err, results, fields) => {
@@ -199,7 +199,7 @@ const update = (name, description, price, res, id) => {
 }
 
 const del = (id, res)=>{
-    con.con.query(
+    con.query(
     "SELECT * FROM products WHERE id = ?",
     [id],
     (err, results, fields) => {
@@ -212,7 +212,7 @@ const del = (id, res)=>{
             res.status(404)
             res.send(`Este produto não existir!`)
         } else {
-            con.con.query(
+            con.query(
             "DELETE FROM products WHERE id = ?",
             [id],
             (err, results, fields) => {
@@ -223,7 +223,7 @@ const del = (id, res)=>{
                     res.send(`Internal error [code: ${uuid} ]`)
                 }
                 else{
-                    con.con.query(
+                    con.query(
                     "SELECT * FROM products WHERE id = ?",
                     [id],
                     (err, results, fields) => {
